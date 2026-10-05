@@ -329,17 +329,31 @@ function aim(){if(mouse.on)return Math.atan2(mouse.y-H/2,mouse.x-W/2);let b=null
 /* ---------- zombies (armoured) ---------- */
 function spawnZ(x,y,o={}){const t=o.t!=null?o.t:cl(Math.hypot(x-SX,y-SY)/650,0,2.4),ah=R()<.75?Math.min(3,ri(0,Math.floor(t)+1)):0,av=R()<.5?Math.min(3,ri(0,Math.floor(t))):0;
 const z={x,y,hp:60,sp:rr(42,78),sr:o.sr||rr(240,360),wa:0,wt:0,wm:0,cd:0,fl:0,ph:M()*8,a:0,mv:0,v:ri(0,8),ah,av,df:Math.min(.6,DFH[ah]+DFV[av]),w:o.w};
-if(o.boss)Object.assign(z,{boss:1,hp:1200,mhp:1200,df:.25,sp:75,sc:2.1,ah:0,av:0,st:'feast',tm:3.6,sr:9999,lt:2,inv:1});
+if(o.boss)Object.assign(z,{boss:1,hp:750,mhp:750,df:.15,sp:62,sc:2.1,ah:0,av:0,st:'feast',tm:3.6,sr:9999,lt:3,sm:6,inv:1});
 Z.push(z);return z}
 function bossAI(z,dt){const tx=P.x-z.x,ty=P.y-z.y,d=Math.hypot(tx,ty)||1,p2=z.hp<z.mhp*.5;z.cd-=dt;z.fl-=dt;z.tm-=dt;z.mv=0;
 const mv=(a,sp)=>{const nx=z.x+Math.cos(a)*sp*dt,ny=z.y+Math.sin(a)*sp*dt;if(!hit(nx,z.y,14))z.x=nx;if(!hit(z.x,ny,14))z.y=ny;z.mv=1;z.ph+=dt*sp*.09};
 if(z.st=='feast'){if(M()<.5)fx(z.x+rr(-14,14),z.y+rr(-14,14),2,'#a11');return}
-if(!z.p2&&p2){z.p2=1;z.st='roar';z.tm=1.4;z.sp=105;shk=1.3;say('SKINWALKER','AAAAAAAAHHH!',1600);for(let i=0,n=0;i<60&&n<4;i++){const x=rr(1290,1760),y=rr(190,470);if(!hit(x,y,10)&&Math.hypot(x-P.x,y-P.y)>150){spawnZ(x,y,{t:2.3,w:2,sr:900});n++}}}
+if(!z.p2&&p2){z.p2=1;z.st='roar';z.tm=1.4;z.sp=80;shk=1.3;say('SKINWALKER','AAAAAAAAHHH!',1600);for(let i=0,n=0;i<60&&n<3;i++){const x=rr(1290,1760),y=rr(190,470);if(!hit(x,y,10)&&Math.hypot(x-P.x,y-P.y)>150){spawnZ(x,y,{t:2.3,w:2,sr:900});n++}}}
 if(z.st=='roar'){shk=Math.max(shk,.5);if(z.tm<=0){z.st='chase';z.lt=1.5}return}
+if(z.st=='summon'){if(z.tm<=0){z.st='chase';z.lt=2}else{shk=Math.max(shk,.3);return}}
+z.sm-=dt;
+if(z.sm<=0&&z.st=='chase'){
+  z.sm=p2?14:18;
+  if(Z.filter(q=>!q.boss).length<10){
+    z.st='summon';z.tm=1.1;say('SKINWALKER','ARISE.',1400);
+    for(let i=0,n=0;i<40&&n<(p2?4:3);i++){
+      const a=R()*6.28,dd=rr(60,120),x=z.x+Math.cos(a)*dd,y=z.y+Math.sin(a)*dd;
+      if(!hit(x,y,10)){spawnZ(x,y,{t:1.5,w:3,sr:900});fx(x,y,10,'#a11');n++}
+    }
+    return;
+  }
+}
 z.a=Math.atan2(ty,tx);
-if(z.st=='chase'){mv(z.a,z.sp);if(d<42&&z.cd<=0){z.cd=.85;hurt(rr(14,22));fx(P.x,P.y,5,'#a11')}z.lt-=dt;if(z.lt<=0&&d>80&&d<470){z.st='wind';z.tm=.6}}
+if(z.st=='chase'){mv(z.a,z.sp);if(d<42&&z.cd<=0){z.cd=1.1;hurt(rr(9,15));fx(P.x,P.y,5,'#a11')}z.lt-=dt;if(z.lt<=0&&d>80&&d<470){z.st='wind';z.tm=.9}}
 else if(z.st=='wind'){z.tel=1;if(z.tm<=0){z.st='lunge';z.tm=.45;z.la=z.a;z.tel=0;z.hd=0}}
-else if(z.st=='lunge'){mv(z.la,560);if(d<36&&!z.hd){z.hd=1;hurt(30);fx(P.x,P.y,8,'#a11');const px=P.x+Math.cos(z.la)*22,py=P.y+Math.sin(z.la)*22;if(!hit(px,py,9)){P.x=px;P.y=py}}if(z.tm<=0){z.st='chase';z.lt=p2?2.1:3.6}}}
+else if(z.st=='lunge'){mv(z.la,420);if(d<36&&!z.hd){z.hd=1;hurt(22);fx(P.x,P.y,8,'#a11');const px=P.x+Math.cos(z.la)*22,py=P.y+Math.sin(z.la)*22;if(!hit(px,py,9)){P.x=px;P.y=py}}if(z.tm<=0){z.st='rec';z.tm=.9}}
+else if(z.st=='rec'){if(z.tm<=0){z.st='chase';z.lt=p2?3.4:5}}}
 /* ---------- tunnel scene ---------- */
 const LAMPS=[];
 function enterTunnel(){pause=1;$('fade').style.opacity=1;setTimeout(()=>{buildTunnel();$('fade').style.opacity=0;pause=0;say('MARCUS','The lights are dead. Keep driving. Slow.',3200)},1000)}
@@ -352,7 +366,7 @@ for(let x=150;x<1250;x+=170)LAMPS.push([x,330,170]);[[1400,330,210],[1560,330,21
 [[1380,236],[1380,414],[1600,236],[1600,414]].forEach(a=>addProp('pillar',a[0],a[1],26,26,'#8a8a82'));
 addProp('sand',1262,178,64,12,'#a8935a');addProp('sand',1262,470,64,12,'#a8935a');addProp('crate',1760,184,22,22,'#8a6a3a');addProp('crate',1760,462,22,22,'#8a6a3a');addProp('crate',1782,184,16,16,'#6a4a2a');
 ['medkit','a9','a12','a76'].forEach((t,i)=>FI.push({id:++fid,...mk(t),x:520+i*38,y:i%2?366:294}));
-['rifle','shotgun','smg','a76','a12','a9','vest2','helm2','medkit','medkit'].forEach((t,i)=>FI.push({id:++fid,...mk(t),x:1640+(i%5)*34,y:i<5?300:350}));
+['rifle','shotgun','smg','a76','a12','a9','vest2','helm2','medkit','medkit','medkit','vest3','helm3'].forEach((t,i)=>FI.push({id:++fid,...mk(t),x:1640+(i%5)*34,y:296+Math.floor(i/5)*28}));
 }
 function breakCar(){const c=CAR;c.eb=1;c.dead=1;c.spd=0;c.bh=Math.min(c.bh,35);P.car=null;NP.in=0;P.x=c.x+14;P.y=c.y-32;NP.x=c.x-14;NP.y=c.y+32;NP.vis=1;shk=1.2;flash=.7;sc.stage=1;sc.t=0;
 say('MARCUS',"The engine just died! Something's in the dark — here they come!",3200);
