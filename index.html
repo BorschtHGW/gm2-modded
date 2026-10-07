@@ -397,7 +397,7 @@ n.mv=mvg;if(mvg){const nx=n.x+mx*sp*dt,ny=n.y+my*sp*dt;if(!hit(nx,n.y,9))n.x=nx;
 /* ---------- update ---------- */
 let spT=0;
 function upd(dt){T+=dt;const c=P.car;let ix=cl((K.d||K.arrowright?1:0)-(K.a||K.arrowleft?1:0)+jx,-1,1),iy=cl((K.s||K.arrowdown?1:0)-(K.w||K.arrowup?1:0)+jy,-1,1);
-if(c){const mx=260*(.5+c.bh/200),th=c.fuel>0?-iy:0;c.spd+=th*(th>0?170:110)*dt;c.spd-=c.spd*.9*dt;c.spd-=Math.sign(c.spd)*Math.min(Math.abs(c.spd),30*dt);c.spd=cl(c.spd,-mx*.4,mx);
+if(c){const mx=260*(.5+c.bh/200),th=c.fuel>0?-iy:0;c.spd+=th*(th>0?1000:900)*dt;c.spd-=c.spd*.9*dt;c.spd-=Math.sign(c.spd)*Math.min(Math.abs(c.spd),30*dt);c.spd=cl(c.spd,-mx*.4,mx);
 c.a+=ix*2.2*cl(c.spd/90,-1,1)*dt;const nx=c.x+Math.cos(c.a)*c.spd*dt,ny=c.y+Math.sin(c.a)*c.spd*dt;
 if(hit(nx,ny,15)){c.bh=Math.max(0,c.bh-Math.abs(c.spd)/25);c.spd*=-.3}else{c.x=nx;c.y=ny}
 c.fuel=Math.max(0,c.fuel-(Math.abs(c.spd)/260*1.3+Math.abs(th)*.15)*dt);P.x=c.x;P.y=c.y;P.ang=c.a;P.mv=0}
