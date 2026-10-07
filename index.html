@@ -282,8 +282,8 @@ $('go').onclick=()=>{$('menu').style.display='none';dead=0;toast('Fix the car ·
 $('again').onclick=()=>location.reload();
 /* ---------- car ---------- */
 const nearCar=()=>{let b=null,bd=75;for(const c of Cars){if(c.dead)continue;const d=Math.hypot(c.x-P.x,c.y-P.y);if(d<bd){bd=d;b=c}}return b};
-function tCar(){if(pause)return;if(P.car){const c=P.car;P.car=null;c.spd=0;P.x=c.x+Math.cos(c.a+1.57)*900;P.y=c.y+Math.sin(c.a+1.57)*900;if(hit(P.x,P.y,9)){P.x=c.x;P.y=c.y}
-if(NP.in){NP.in=0;NP.x=c.x+Math.cos(c.a-1.57)*900;NP.y=c.y+Math.sin(c.a-1.57)*900;if(hit(NP.x,NP.y,9)){NP.x=c.x;NP.y=c.y}}return}
+function tCar(){if(pause)return;if(P.car){const c=P.car;P.car=null;c.spd=0;P.x=c.x+Math.cos(c.a+1.57)*32;P.y=c.y+Math.sin(c.a+1.57)*32;if(hit(P.x,P.y,9)){P.x=c.x;P.y=c.y}
+if(NP.in){NP.in=0;NP.x=c.x+Math.cos(c.a-1.57)*32;NP.y=c.y+Math.sin(c.a-1.57)*32;if(hit(NP.x,NP.y,9)){NP.x=c.x;NP.y=c.y}}return}
 const c=nearCar();if(!c)return;if(c.wb)return toast('Fix the wheels first');if(c.eb)return toast('Engine is broken');if(c.fuel<=0)return toast('No fuel');P.car=c;
 if(NP.vis&&NP.mode=='follow'&&Math.hypot(NP.x-c.x,NP.y-c.y)<220){NP.in=1;toast('Marcus gets in')}else if(NP.vis&&NP.mode=='stay')toast('Marcus stays behind (set him to FOLLOW)')}
 $('cp').onclick=e=>{const b=e.target.closest('button'),r=b&&b.dataset.r,c=nearCar();if(!r||!c)return;if(!take(r))return toast('You need that item');if(r=='fuel')c.fuel=Math.min(100,c.fuel+40);if(r=='wheel')c.wb--;if(r=='engine'){c.eb=0;say('MARCUS','Engine turns over! One more piece to go.',2600)}if(r=='body'){c.bh=100;say('MARCUS','Body is holding. Let\'s get her moving.',2600)}};
