@@ -418,10 +418,11 @@ for(const z of Z){
   // 1. Проверка тарана машиной для ВСЕХ типов врагов (включая боссов)
   if(c && Math.abs(c.spd) > 90){
     const dpl = Math.hypot(P.x - z.x, P.y - z.y);
-    if(dpl < (z.boss ? 35 : 26)){ // Если босс — хитбокс чуть больше (35)
+    if(dpl < (z.boss ? 45 : 26)){ // Для босса увеличили хитбокс до 45, чтобы машина точно задевала
       if(z.boss){
-        dmgZ(z, Math.abs(c.spd) * 0.5, 1); // Босс получает урон в зависимости от скорости машины
-        z.fl = .15; // Эффект пошатывания
+        // Напрямую вычитаем здоровье у босса (скорость машины * 0.5)
+        z.hp -= Math.abs(c.spd) * 0.5; 
+        z.fl = .15; // Эффект мерцания/пошатывания
       } else {
         z.hp = 0; // Обычный враг погибает сразу
       }
@@ -430,10 +431,10 @@ for(const z of Z){
     }
   }
 
-  // 2. ИИ босса (теперь вызывается ПОСЛЕ проверки тарана)
+  // 2. ИИ босса
   if(z.boss){bossAI(z,dt);continue}
 
-  // 3. ИИ обычных врагов (ваша стандартная логика движения и атак)
+  // 3. ИИ обычных врагов
   const tx=P.x-z.x,ty=P.y-z.y,dpl=Math.hypot(tx,ty)||1;let tgx=tx,tgy=ty,d=dpl,tn=0,dx=0,dy=0;
   if(NP.vis&&!NP.in&&sc.stage<4){const nd=Math.hypot(NP.x-z.x,NP.y-z.y);if(nd<dpl){tgx=NP.x-z.x;tgy=NP.y-z.y;d=nd||1;tn=1}}
   if(d<z.sr){dx=tgx/d;dy=tgy/d}else{z.wt-=dt;if(z.wt<0){z.wa=R()*6.28;z.wt=rr(1,4);z.wm=R()<.5}if(z.wm){dx=Math.cos(z.wa)*.4;dy=Math.sin(z.wa)*.4}}
