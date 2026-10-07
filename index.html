@@ -414,14 +414,33 @@ npcUpd(dt);story(dt);
 if(scene=='city'){for(const s of SITES)if(!s.on&&Math.hypot(s.x-P.x,s.y-P.y)<520){s.on=1;for(let i=0,n=0;i<40&&n<s.n;i++){const x=s.x+rr(-110,110),y=s.y+rr(-110,110);if(!hit(x,y,9)){spawnZ(x,y,{t:2.1,sr:420});n++}}toast('Something is moving in there...')}
 spT-=dt;if(spT<0&&Z.length<26){spT=.7;const a=R()*6.28,d=rr(480,680),x=P.x+Math.cos(a)*d,y=P.y+Math.sin(a)*d;
 if(x>20&&y>20&&x<WS-20&&y<WS-20&&R()<[.8,1,.5][zone[x/BS|0][y/BS|0]]&&!hit(x,y,9))spawnZ(x,y)}}
-for(const z of Z){if(z.boss){bossAI(z,dt);continue}
-const tx=P.x-z.x,ty=P.y-z.y,dpl=Math.hypot(tx,ty)||1;let tgx=tx,tgy=ty,d=dpl,tn=0,dx=0,dy=0;
-if(NP.vis&&!NP.in&&sc.stage<4){const nd=Math.hypot(NP.x-z.x,NP.y-z.y);if(nd<dpl){tgx=NP.x-z.x;tgy=NP.y-z.y;d=nd||1;tn=1}}
-if(d<z.sr){dx=tgx/d;dy=tgy/d}else{z.wt-=dt;if(z.wt<0){z.wa=R()*6.28;z.wt=rr(1,4);z.wm=R()<.5}if(z.wm){dx=Math.cos(z.wa)*.4;dy=Math.sin(z.wa)*.4}}
-z.mv=dx||dy?1:0;if(z.mv){z.a=Math.atan2(dy,dx);z.ph+=dt*z.sp*.1}
-const nx=z.x+dx*z.sp*dt,ny=z.y+dy*z.sp*dt;if(!hit(nx,z.y,8))z.x=nx;if(!hit(z.x,ny,8))z.y=ny;
-z.cd-=dt;z.fl-=dt;if(d<22&&z.cd<=0){z.cd=.9;if(tn)hitNP(rr(8,14));else if(c)c.bh=Math.max(0,c.bh-4);else hurt(rr(8,14))}
-if(c&&Math.abs(c.spd)>90&&dpl<26){z.hp=0;fx(z.x,z.y,10,'#a11');c.bh=Math.max(0,c.bh-3)}}
+for(const z of Z){
+  // 1. Проверка тарана машиной для ВСЕХ типов врагов (включая боссов)
+  if(c && Math.abs(c.spd) > 90){
+    const dpl = Math.hypot(P.x - z.x, P.y - z.y);
+    if(dpl < (z.boss ? 35 : 26)){ // Если босс — хитбокс чуть больше (35)
+      if(z.boss){
+        dmgZ(z, Math.abs(c.spd) * 0.5, 1); // Босс получает урон в зависимости от скорости машины
+        z.fl = .15; // Эффект пошатывания
+      } else {
+        z.hp = 0; // Обычный враг погибает сразу
+      }
+      fx(z.x, z.y, 10, '#a11'); // Эффект крови
+      c.bh = Math.max(0, c.bh - 3); // Машина теряет прочность
+    }
+  }
+
+  // 2. ИИ босса (теперь вызывается ПОСЛЕ проверки тарана)
+  if(z.boss){bossAI(z,dt);continue}
+
+  // 3. ИИ обычных врагов (ваша стандартная логика движения и атак)
+  const tx=P.x-z.x,ty=P.y-z.y,dpl=Math.hypot(tx,ty)||1;let tgx=tx,tgy=ty,d=dpl,tn=0,dx=0,dy=0;
+  if(NP.vis&&!NP.in&&sc.stage<4){const nd=Math.hypot(NP.x-z.x,NP.y-z.y);if(nd<dpl){tgx=NP.x-z.x;tgy=NP.y-z.y;d=nd||1;tn=1}}
+  if(d<z.sr){dx=tgx/d;dy=tgy/d}else{z.wt-=dt;if(z.wt<0){z.wa=R()*6.28;z.wt=rr(1,4);z.wm=R()<.5}if(z.wm){dx=Math.cos(z.wa)*.4;dy=Math.sin(z.wa)*.4}}
+  z.mv=dx||dy?1:0;if(z.mv){z.a=Math.atan2(dy,dx);z.ph+=dt*z.sp*.1}
+  const nx=z.x+dx*z.sp*dt,ny=z.y+dy*z.sp*dt;if(!hit(nx,z.y,8))z.x=nx;if(!hit(z.x,ny,8))z.y=ny;
+  z.cd-=dt;z.fl-=dt;if(d<22&&z.cd<=0){z.cd=.9;if(tn)hitNP(rr(8,14));else if(c)c.bh=Math.max(0,c.bh-4);else hurt(rr(8,14))}
+}
 Z=Z.filter(z=>{if(z.hp<=0){if(!z.boss&&R()<.1&&!hit(z.x,z.y,6))FI.push({id:++fid,...roll(),x:z.x,y:z.y});return 0}return z.boss||z.w||Math.hypot(z.x-P.x,z.y-P.y)<900});
 for(let i=BL.length-1;i>=0;i--){const b=BL[i];let alive=1;const n=Math.ceil(b.v*dt/8),sx=b.vx*dt/n,sy=b.vy*dt/n;
 for(let k=0;k<n&&alive;k++){b.x+=sx;b.y+=sy;b.l-=Math.hypot(sx,sy);if(b.l<=0)alive=0;else if(hit(b.x,b.y,1)){alive=0;fx(b.x,b.y,4,'#ffd')}else{const z=Z.find(z=>(z.x-b.x)**2+(z.y-b.y)**2<(z.boss?700:121));if(z){dmgZ(z,b.d*(.5+.5*b.l/b.g),1);z.fl=.15;if(!z.boss){z.x+=sx*.12;z.y+=sy*.12}fx(b.x,b.y,7,'#a11');alive=0}}}
