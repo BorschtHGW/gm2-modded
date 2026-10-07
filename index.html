@@ -236,7 +236,7 @@ Hs.forEach(h=>{for(let y=Math.floor(h.y/TS);y<=Math.floor((h.y+h.h)/TS);y++)for(
 const mm=mkC(NT),mmc=mm.getContext('2d');mmc.fillStyle='#000';mmc.fillRect(0,0,NT,NT);const mini=$('mini').getContext('2d');
 function reveal(){const tx=P.x/TS|0,ty=P.y/TS|0;for(let y=ty-8;y<=ty+8;y++)for(let x=tx-8;x<=tx+8;x++){if(x<0||y<0||x>=NT||y>=NT||seen[y*NT+x]||(x-tx)**2+(y-ty)**2>64)continue;seen[y*NT+x]=1;mmc.fillStyle=TC[tile[y*NT+x]];mmc.fillRect(x,y,1,1)}}
 /* ---------- the broken car, player, Marcus ---------- */
-const CAR={x:310,y:1215,a:0,spd:0,fuel:80,wb:0,eb:1,bh:22,col:'#b33'};Cars.push(CAR);
+const CAR={x:310,y:1215,a:0,spd:0,fuel:9999999,wb:1,eb:1,bh:9999,col:'#b33'};Cars.push(CAR);
 const P={x:250,y:1190,hp:100,hu:100,th:100,eq:{head:{t:'helm1',q:1},body:null,bp:{t:'bp1',q:1},gun:{t:'crowbar',q:1}},car:null,ang:0,cd:0,fl:0,ph:0,mv:0,swT:0,swD:.3,bl:0,kick:0,mf:0,rl:0,rlg:null},bag=[{t:'medkit',q:1},{t:'water',q:1},{t:'water',q:1},{t:'water',q:1},{t:'tuna',q:1},{t:'tuna',q:1},{t:'tuna',q:1}];
 const NP={x:215,y:1205,hp:100,mode:'follow',eq:{gun:null,head:null,body:null},ang:0,ph:0,mv:0,cd:0,rl:0,mag:0,fl:0,swT:0,swD:.3,mf:0,in:0,vis:1,run:0};
 const WM={x:1500,y:330,a:Math.PI,vis:0,ph:0,mv:0};
