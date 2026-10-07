@@ -368,7 +368,7 @@ addProp('sand',1262,178,64,12,'#a8935a');addProp('sand',1262,470,64,12,'#a8935a'
 ['medkit','a9','a12','a76'].forEach((t,i)=>FI.push({id:++fid,...mk(t),x:520+i*38,y:i%2?366:294}));
 ['rifle','shotgun','smg','a76','a12','a9','vest2','helm2','medkit','medkit','medkit','vest3','helm3'].forEach((t,i)=>FI.push({id:++fid,...mk(t),x:1640+(i%5)*34,y:296+Math.floor(i/5)*28}));
 }
-function breakCar(){const c=CAR;c.eb=1;c.dead=1;c.spd=0;c.bh=Math.min(c.bh,35);P.car=null;NP.in=0;P.x=c.x+14;P.y=c.y-32;NP.x=c.x-14;NP.y=c.y+32;NP.vis=1;shk=1.2;flash=.7;sc.stage=1;sc.t=0;
+function breakCar(){return;const c=CAR;c.eb=1;c.dead=1;c.spd=0;c.bh=Math.min(c.bh,35);P.car=null;NP.in=0;P.x=c.x+14;P.y=c.y-32;NP.x=c.x-14;NP.y=c.y+32;NP.vis=1;shk=1.2;flash=.7;sc.stage=1;sc.t=0;
 say('MARCUS',"The engine just died! Something's in the dark — here they come!",3200);
 for(let i=0,n=0;i<300&&n<18;i++){const x=rr(720,1220),y=rr(298,362);if(!hit(x,y,9)&&!Z.some(z=>Math.hypot(z.x-x,z.y-y)<22)){spawnZ(x,y,{t:2.3,w:1,sr:900});n++}}}
 function story(dt){if(scene!='tunnel')return;sc.t+=dt;const s=sc.stage;
