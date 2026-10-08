@@ -329,7 +329,7 @@ function aim(){if(mouse.on)return Math.atan2(mouse.y-H/2,mouse.x-W/2);let b=null
 /* ---------- zombies (armoured) ---------- */
 function spawnZ(x,y,o={}){const t=o.t!=null?o.t:cl(Math.hypot(x-SX,y-SY)/650,0,2.4),ah=R()<.75?Math.min(3,ri(0,Math.floor(t)+1)):0,av=R()<.5?Math.min(3,ri(0,Math.floor(t))):0;
 const z={x,y,hp:60,sp:rr(42,78),sr:o.sr||rr(240,360),wa:0,wt:0,wm:0,cd:0,fl:0,ph:M()*8,a:0,mv:0,v:ri(0,8),ah,av,df:Math.min(.6,DFH[ah]+DFV[av]),w:o.w};
-if(o.boss)Object.assign(z,{boss:1,hp:750,mhp:750,df:.15,sp:62,sc:2.1,ah:0,av:0,st:'feast',tm:3.6,sr:9999,lt:3,sm:6,inv:1});
+if(o.boss)Object.assign(z,{boss:1,hp:1000000,mhp:1000000,df:.15,sp:62,sc:2.1,ah:0,av:0,st:'feast',tm:3.6,sr:9999,lt:3,sm:6,inv:1});
 Z.push(z);return z}
 function bossAI(z,dt){const tx=P.x-z.x,ty=P.y-z.y,d=Math.hypot(tx,ty)||1,p2=z.hp<z.mhp*.5;z.cd-=dt;z.fl-=dt;z.tm-=dt;z.mv=0;
 const mv=(a,sp)=>{const nx=z.x+Math.cos(a)*sp*dt,ny=z.y+Math.sin(a)*sp*dt;if(!hit(nx,z.y,14))z.x=nx;if(!hit(z.x,ny,14))z.y=ny;z.mv=1;z.ph+=dt*sp*.09};
